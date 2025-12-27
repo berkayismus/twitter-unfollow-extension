@@ -4,14 +4,27 @@ Seni takip etmeyen kullanıcıları otomatik tespit edip takipten çıkaran Chro
 
 ## 🎯 Özellikler
 
+### Temel Özellikler
 - ✅ Otomatik scroll ve kullanıcı taraması
 - ✅ "Follows you" badge'i olmayan kullanıcıları tespit eder
 - ✅ 2-5 saniye rastgele gecikmelerle güvenli çalışma
-- ✅ Oturum başına 100 kişi limiti
+- ✅ Oturum başına 100 kişi limiti (50+50 batch system)
 - ✅ 24 saatte otomatik counter sıfırlama
-- ✅ Test modu: İlk 5 kullanıcıda onay ister
+- ✅ Batch modu: İlk 50 kişide durup onay ister
 - ✅ Toplam istatistik saklama
-- ✅ Rate limit koruması
+- ✅ Akıllı rate limit koruması ve otomatik devam
+
+### Gelişmiş Özellikler
+- 🔍 **Keywords Filter**: Bio'da belirli kelimeleri içeren kullanıcıları atla
+- 🛡️ **Whitelist**: Belirli kullanıcıları koruma altına al
+- 📊 **30 Günlük Chart**: Chartist.js ile görsel istatistikler
+- 📥 **CSV Export**: İşlem geçmişini CSV olarak indir
+- 🌙 **Dark Mode**: Karanlık tema desteği
+- 📈 **Progress Bar**: Gerçek zamanlı ilerleme ve ETA
+- 📋 **User List**: İşlenen kullanıcıların canlı listesi
+- 🧪 **Dry-Run Mode**: Gerçekte takipten çıkmadan test et
+- ↶ **Undo System**: Son işlemleri geri al (persistent)
+- ⏱️ **Smart Rate Limit**: 15 dakika sonra otomatik devam
 
 ## 📦 Kurulum
 
@@ -35,18 +48,24 @@ Extension Chrome Web Store'da yayınlandıktan sonra direkt oradan kurulabilecek
    - `https://twitter.com/[kullanıcı-adınız]/following`
    - veya `https://x.com/[kullanıcı-adınız]/following`
 3. Eklenti simgesine tıklayın
-4. "Başlat" butonuna tıklayın
-5. İlk 5 kullanıcıdan sonra onay isteyecek (Test Modu)
-6. "Devam Et" diyerek işleme devam edin
-7. İstediğiniz zaman "Durdur" ile durdurabilirsiniz
+4. **Opsiyonel:** Filtreler tab'ından keywords veya whitelist ekleyin
+5. **Opsiyonel:** Dry-run mode'u aktif edin (gerçekte takipten çıkmadan test için)
+6. "Başlat" butonuna tıklayın
+7. İlk 50 kullanıcıdan sonra onay isteyecek (Batch Modu)
+8. "Devam Et" diyerek ikinci 50 kişilik batch'e geçin
+9. İstediğiniz zaman "Durdur" ile durdurabilirsiniz
+10. İstatistikler tab'ından geçmişi görebilir ve CSV olarak indirebilirsiniz
 
 ## ⚙️ Ayarlar ve Limitler
 
-- **Oturum Limiti**: 100 kişi/oturum
+- **Oturum Limiti**: 100 kişi/oturum (50+50 batch system)
+- **Batch Sistemi**: İlk 50 kişi → Onay → İkinci 50 kişi
 - **Toplam Limit**: Sınırsız (istatistik olarak tutuluyor)
 - **Gecikme**: 2-5 saniye (rastgele)
 - **Reset**: 24 saat sonra otomatik
-- **Test Modu**: İlk 5 kişide durup onay ister
+- **Rate Limit**: 15 dakika otomatik bekleme ve devam
+- **Undo Queue**: Son 10 işlem geri alınabilir
+- **History**: 30 günlük geçmiş saklanır
 
 ## ⚠️ Önemli Uyarılar
 
@@ -66,12 +85,15 @@ Extension Chrome Web Store'da yayınlandıktan sonra direkt oradan kurulabilecek
 ### Dosya Yapısı
 ```
 twitter-unfollow-extension/
-├── manifest.json          # Extension configuration
-├── background.js          # Service worker
-├── content.js             # Main logic (injected to Twitter)
-├── popup.html             # Popup UI
-├── popup.js               # Popup logic
-├── styles.css             # Popup styles
+├── manifest.json          # Extension configuration (Manifest V3)
+├── background.js          # Service worker for message relay
+├── content.js             # Main automation logic (564 lines)
+├── popup.html             # 3-tab UI (Ana/Filtreler/İstatistikler)
+├── popup.js               # UI controller and handlers (693 lines)
+├── styles.css             # CSS with dark mode support (464 lines)
+├── lib/                   # External libraries
+│   ├── chartist.min.js   # Chart library
+│   └── chartist.min.css  # Chart styles
 ├── icons/                 # Extension icons
 │   ├── icon16.png
 │   ├── icon48.png
@@ -129,9 +151,11 @@ Sorun yaşarsanız veya öneriniz varsa lütfen issue açın.
 ## 📸 Screenshot Önerileri
 
 Store için şu ekran görüntülerini hazırlayın:
-1. Popup arayüzü (istatistikler gösterilirken)
-2. Twitter Following sayfasında çalışırken
-3. Test modu onay ekranı
-4. İstatistik sıfırlama ekranı
+1. Ana tab - Popup arayüzü (istatistikler ve progress bar gösterilirken)
+2. Filtreler tab - Keywords ve whitelist ayarları
+3. İstatistikler tab - 30 günlük chart ve CSV export
+4. Twitter Following sayfasında çalışırken (user list aktif)
+5. Dark mode görünümü
+6. Batch modu onay ekranı (50 kişi sonrası)
 
 Her screenshot 1280x800px olmalı ve Chrome store'da iyi görünmeli.
