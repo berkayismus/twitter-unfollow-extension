@@ -1,74 +1,72 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitter Auto Unfollow</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Twitter Auto Unfollow</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🔴 Twitter Auto Unfollow</h1>
-            <p class="subtitle">Seni takip etmeyenleri otomatik bul ve takipten çık</p>
-        </div>
+  <div class="container">
+    <div class="header">
+      <h1>🔴 Twitter Auto Unfollow</h1>
+      <p class="subtitle">Seni takip etmeyenleri otomatik bul ve takipten çık</p>
+    </div>
 
-        <div class="stats">
-            <div class="stat-item">
-                <span class="stat-label">Oturum</span>
-                <span class="stat-value" id="sessionCount">0/100</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Toplam</span>
-                <span class="stat-value" id="totalCount">0</span>
-            </div>
-        </div>
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-label">Oturum</span>
+        <span class="stat-value" id="sessionCount">0/100</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Toplam</span>
+        <span class="stat-value" id="totalCount">0</span>
+      </div>
+    </div>
 
-        <div class="status-bar">
-            <span class="status-indicator" id="statusIndicator">●</span>
-            <span id="statusText">Hazır</span>
-        </div>
-        Batch Tamamlandı</strong></p>
-        <p>50 kişi takipten çıkarıldı. Devam etmek istiyor musunuz?</p>
-        <button id="continueBtn" class="btn btn-success">✓ Devam Et (50 kişi daha)
-            <p>İlk 5 kullanıcıda duracak. Devam etmek istiyor musunuz?</p>
-            <button id="continueBtn" class="btn btn-success">✓ Devam Et</button>
+    <div class="status-bar">
+      <span class="status-indicator" id="statusIndicator">●</span>
+      <span id="statusText">Hazır</span>
+    </div>
+
+    <div id="testModeAlert" class="alert alert-warning" style="display: none;">
+      <p><strong>⚠️ Batch Tamamlandı</strong></p>
+      <p>50 kişi takipten çıkarıldı. Devam etmek istiyor musunuz?</p>
+      <button id="continueBtn" class="btn btn-success">✓ Devam Et (50 kişi daha)</button>
     </div>
 
     <div id="rateLimitAlert" class="alert alert-danger" style="display: none;">
-        <p><strong>🚫 Rate Limit!</strong></p>
-        <p>Twitter tarafından hız sınırına takıldınız. Lütfen birkaç saat bekleyin.</p>
+      <p><strong>🚫 Rate Limit!</strong></p>
+      <p>Twitter tarafından hız sınırına takıldınız. Lütfen birkaç saat bekleyin.</p>
     </div>
 
     <div id="limitReachedAlert" class="alert alert-info" style="display: none;">
-        <p><strong>✓ Limit Doldu</strong></p>
-        <p>Oturum limiti (100) doldu. 24 saat sonra tekrar deneyin.</p>
+      <p><strong>✓ Limit Doldu</strong></p>
+      <p>Oturum limiti (100) doldu. 24 saat sonra tekrar deneyin.</p>
     </div>
 
     <div class="controls">
-        <button id="startBtn" class="btn btn-primary">▶ Başlat</button>
-        <button id="stopBtn" class="btn btn-danger" style="display: none;">■ Durdur</button>
+      <button id="startBtn" class="btn btn-primary">▶ Başlat</button>
+      <button id="stopBtn" class="btn btn-danger" style="display: none;">■ Durdur</button>
     </div>
 
     <div class="info">
-        <p class="last-run">Son çalıştırma: <span id="lastRun">-</span></p>
-        <button id="resetBtn" class="btn btn-secondary">Sıfırla</button>
+      <p class="last-run">Son çalıştırma: <span id="lastRun">-</span></p>
+      <button id="resetBtn" class="btn btn-secondary">Sıfırla</button>
     </div>
 
     <div class="warning">
-        <p><strong>⚠️ Uyarı:</strong></p>
-        <ul>
-            <li>Sadece "Following" sayfasında çalışır</li>
-            <li>2-5 saniye gecikme ile çalışır</li>
-            <li>Oturum başına max 100 kişi</li>
-            <li>24 saatte otomatik sıfırlanır</li>
-        </ul>
+      <p><strong>⚠️ Uyarı:</strong></p>
+      <ul>
+        <li>Sadece "Following" sayfasında çalışır</li>
+        <li>2-5 saniye gecikme ile çalışır</li>
+        <li>İlk 50'den sonra onay ister</li>
+        <li>Oturum başına max 100 kişi</li>
+        <li>24 saatte otomatik sıfırlanır</li>
+      </ul>
     </div>
-    </div>
+  </div>
 
-    <script src="popup.js"></script>
+  <script src="popup.js"></script>
 </body>
-
 </html>
