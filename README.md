@@ -128,22 +128,6 @@ Sorun yaşarsanız veya öneriniz varsa lütfen issue açın.
 
 ---
 
+---
+
 **⚠️ UYARI**: Bu eklentiyi kendi sorumluluğunuzda kullanın. Aşırı kullanım Twitter/X tarafından hesap kısıtlamalarına yol açabilir.
-```
-
-## 🚀 Chrome Web Store'a Yükleme Adımları
-
-1. [Chrome Developer Dashboard](https://chrome.google.com/webstore/devconsole) hesabı oluşturun ($5)
-2. "New Item" butonuna tıklayın
-3. Extension dosyalarını ZIP olarak yükleyin:
-   ```bash
-   cd /tmp/twitter-unfollow-extension
-   zip -r twitter-unfollow-extension.zip . -x "*.git*" "*.DS_Store" "README.md"
-   ```
-4. Store listing bilgilerini doldurun:
-   - Detailed description (yukarıdaki taslağı kullanın)
-   - Screenshots (minimum 1 adet, 1280x800px)
-   - Privacy policy URL (yukarıdaki taslağı bir web sayfasında yayınlayın)
-   - Category: Productivity
-5. "Submit for review" ile gözden geçirmeye gönderin
-6. ~1-3 gün içinde onaylanır
