@@ -235,18 +235,6 @@ async function unfollowUser(userCell) {
         return false;
     }
 }
-            });
-
-sendStatus('unfollowed', { username: getUsernameFromCell(userCell) });
-return true;
-        }
-
-return false;
-    } catch (error) {
-    console.error('Unfollow error:', error);
-    return false;
-}
-}
 
 // Get username from user cell
 function getUsernameFromCell(userCell) {
@@ -383,18 +371,22 @@ function scanUsers() {
 
 // Auto scroll to load more users
 async function autoScroll() {
+    console.log('Scrolling...');
     // Scroll to bottom
     window.scrollTo(0, document.documentElement.scrollHeight);
     await randomDelay(CONFIG.SCROLL_DELAY, CONFIG.SCROLL_DELAY + 1000);
 
     // Check if new content appeared by counting UserCells
     const userCellsCount = document.querySelectorAll('[data-testid="UserCell"]').length;
+    console.log('UserCells count:', userCellsCount);
     return userCellsCount;
 }
 
 // Main loop
 async function mainLoop() {
+    console.log('mainLoop started, isRunning:', isRunning);
     await initStorage();
+    console.log('Storage initialized, sessionCount:', sessionCount);
     sendStatus('started');
 
     let noNewContentCount = 0;
@@ -498,12 +490,18 @@ async function mainLoop() {
 // Listen for messages from popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'START') {
+        console.log('START message received');
         if (!isRunning) {
+            console.log('Starting mainLoop...');
             isRunning = true;
             isPaused = false;
             operationStartTime = Date.now();
             operationSpeeds = [];
-            mainLoop();
+            mainLoop().catch(err => {
+                console.error('mainLoop error:', err);
+                isRunning = false;
+                sendStatus('error');
+            });
         }
         sendResponse({ success: true });
     } else if (message.action === 'STOP') {
