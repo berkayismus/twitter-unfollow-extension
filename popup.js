@@ -67,7 +67,7 @@ async function init() {
   }
 
   if (!currentTab.url.includes('/following')) {
-    updateStatus('error', '❌ Following sayfasına gidin');
+    updateStatus('error', '❌ Following sayfasına gidin (örn: x.com/kullaniciadi/following)');
     elements.startBtn.disabled = true;
     return;
   }
@@ -81,9 +81,14 @@ async function init() {
   
   setupEventListeners();
   
-  chrome.tabs.sendMessage(currentTab.id, { action: 'GET_STATUS' }).catch(() => {
-    console.log('Content script not ready');
-  });
+  // Check if content script is loaded
+  try {
+    await chrome.tabs.sendMessage(currentTab.id, { action: 'GET_STATUS' });
+    updateStatus('ready', '✓ Hazır');
+  } catch (error) {
+    console.log('Content script not loaded yet');
+    updateStatus('ready', '⚠️ Hazır (Sayfayı yenilerseniz daha iyi çalışabilir)');
+  }
 }
 
 // Setup event listeners
@@ -320,21 +325,21 @@ async function handleUndo() {
 async function handleDryRunToggle(e) {
   const enabled = e.target.checked;
   
+  await chrome.storage.local.set({ dryRunMode: enabled });
+  
   try {
     await chrome.tabs.sendMessage(currentTab.id, { 
       action: 'TOGGLE_DRY_RUN',
       enabled 
     });
-    
-    await chrome.storage.local.set({ dryRunMode: enabled });
-    
-    if (enabled) {
-      updateStatus('ready', '🧪 Dry Run Mode aktif');
-    } else {
-      updateStatus('ready', '✓ Normal mode');
-    }
   } catch (error) {
-    console.error('Failed to toggle dry-run:', error);
+    console.log('Content script not loaded, but settings saved');
+  }
+  
+  if (enabled) {
+    updateStatus('ready', '🧪 Dry Run Mode aktif');
+  } else {
+    updateStatus('ready', '✓ Normal mode');
   }
 }
 
@@ -350,10 +355,14 @@ async function handleAddKeyword() {
     keywords.push(keyword.toLowerCase());
     await chrome.storage.local.set({ keywords });
     
-    await chrome.tabs.sendMessage(currentTab.id, { 
-      action: 'UPDATE_KEYWORDS',
-      keywords 
-    });
+    try {
+      await chrome.tabs.sendMessage(currentTab.id, { 
+        action: 'UPDATE_KEYWORDS',
+        keywords 
+      });
+    } catch (error) {
+      console.log('Content script not loaded, but settings saved');
+    }
     
     renderKeywordList(keywords);
   }
@@ -368,10 +377,14 @@ async function handleRemoveKeyword(keyword) {
   const filtered = keywords.filter(k => k !== keyword);
   await chrome.storage.local.set({ keywords: filtered });
   
-  await chrome.tabs.sendMessage(currentTab.id, { 
-    action: 'UPDATE_KEYWORDS',
-    keywords: filtered 
-  });
+  try {
+    await chrome.tabs.sendMessage(currentTab.id, { 
+      action: 'UPDATE_KEYWORDS',
+      keywords: filtered 
+    });
+  } catch (error) {
+    console.log('Content script not loaded, but settings saved');
+  }
   
   renderKeywordList(filtered);
 }
@@ -403,10 +416,14 @@ async function handleAddWhitelist() {
     whitelist[username] = { addedDate: Date.now() };
     await chrome.storage.local.set({ whitelist });
     
-    await chrome.tabs.sendMessage(currentTab.id, { 
-      action: 'UPDATE_WHITELIST',
-      whitelist 
-    });
+    try {
+      await chrome.tabs.sendMessage(currentTab.id, { 
+        action: 'UPDATE_WHITELIST',
+        whitelist 
+      });
+    } catch (error) {
+      console.log('Content script not loaded, but settings saved');
+    }
     
     renderWhitelistList(whitelist);
   }
@@ -421,10 +438,14 @@ async function handleRemoveWhitelist(username) {
   delete whitelist[username];
   await chrome.storage.local.set({ whitelist });
   
-  await chrome.tabs.sendMessage(currentTab.id, { 
-    action: 'UPDATE_WHITELIST',
-    whitelist 
-  });
+  try {
+    await chrome.tabs.sendMessage(currentTab.id, { 
+      action: 'UPDATE_WHITELIST',
+      whitelist 
+    });
+  } catch (error) {
+    console.log('Content script not loaded, but settings saved');
+  }
   
   renderWhitelistList(whitelist);
 }
