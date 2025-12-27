@@ -150,23 +150,23 @@ function findFollowingButton(userCell) {
 // Unfollow a user
 async function unfollowUser(userCell) {
     const username = getUsernameFromCell(userCell);
-    
+
     try {
         // Dry-run mode - simulate without actual unfollowing
         if (dryRunMode) {
             console.log(`[DRY RUN] Would unfollow ${username}`);
             await randomDelay(CONFIG.MIN_DELAY, CONFIG.MAX_DELAY); // Simulate delay
-            
+
             sessionCount++;
             sendStatus('unfollowed', { username, dryRun: true });
-            chrome.runtime.sendMessage({ 
-                type: 'USER_PROCESSED', 
+            chrome.runtime.sendMessage({
+                type: 'USER_PROCESSED',
                 data: { username, action: 'dry-run', timestamp: Date.now() }
             });
-            
+
             // Update daily stats
             await updateDailyStats();
-            
+
             return true;
         }
 
@@ -188,14 +188,14 @@ async function unfollowUser(userCell) {
 
             sessionCount++;
             totalUnfollowed++;
-            
+
             // Add to undo queue
             undoQueue.push({
                 username,
                 timestamp: Date.now(),
                 userCell: username // Store username for refollow
             });
-            
+
             // Limit undo queue size
             if (undoQueue.length > CONFIG.MAX_UNDO_QUEUE) {
                 undoQueue.shift();
@@ -207,45 +207,45 @@ async function unfollowUser(userCell) {
                 lastRun: new Date().toISOString(),
                 undoQueue
             });
-            
+
             // Update daily stats
             await updateDailyStats();
-            
+
             // Add to history
             await addToHistory(username, 'manual');
 
             sendStatus('unfollowed', { username });
-            chrome.runtime.sendMessage({ 
-                type: 'USER_PROCESSED', 
+            chrome.runtime.sendMessage({
+                type: 'USER_PROCESSED',
                 data: { username, action: 'unfollowed', timestamp: Date.now() }
             });
-            
+
             return true;
         }
 
         return false;
     } catch (error) {
         console.error('Unfollow error:', error);
-        
+
         // Check for rate limit
         if (error.message && error.message.includes('429')) {
             await handleRateLimit();
         }
-        
+
         return false;
     }
 }
             });
 
-            sendStatus('unfollowed', { username: getUsernameFromCell(userCell) });
-            return true;
+sendStatus('unfollowed', { username: getUsernameFromCell(userCell) });
+return true;
         }
 
-        return false;
+return false;
     } catch (error) {
-        console.error('Unfollow error:', error);
-        return false;
-    }
+    console.error('Unfollow error:', error);
+    return false;
+}
 }
 
 // Get username from user cell
@@ -263,13 +263,13 @@ async function updateDailyStats() {
     const today = new Date().toISOString().split('T')[0];
     const data = await chrome.storage.local.get(['unfollowStats']);
     const stats = data.unfollowStats || { daily: {} };
-    
+
     if (!stats.daily[today]) {
         stats.daily[today] = { unfollowed: 0, timestamp: Date.now() };
     }
-    
+
     stats.daily[today].unfollowed++;
-    
+
     await chrome.storage.local.set({ unfollowStats: stats });
 }
 
@@ -277,17 +277,17 @@ async function updateDailyStats() {
 async function addToHistory(username, reason) {
     const data = await chrome.storage.local.get(['unfollowHistory']);
     const history = data.unfollowHistory || [];
-    
+
     history.push({
         username,
         date: new Date().toISOString(),
         reason
     });
-    
+
     // Cleanup old history (30 days)
     const thirtyDaysAgo = Date.now() - (CONFIG.HISTORY_RETENTION_DAYS * 24 * 60 * 60 * 1000);
     const filtered = history.filter(item => new Date(item.date).getTime() > thirtyDaysAgo);
-    
+
     await chrome.storage.local.set({ unfollowHistory: filtered });
 }
 
@@ -296,17 +296,17 @@ async function handleRateLimit() {
     const now = Date.now();
     const waitTime = 15 * 60 * 1000; // 15 minutes
     rateLimitUntil = now + waitTime;
-    
+
     await chrome.storage.local.set({ rateLimitUntil });
-    
+
     isPaused = true;
-    chrome.runtime.sendMessage({ 
-        type: 'RATE_LIMIT_HIT', 
+    chrome.runtime.sendMessage({
+        type: 'RATE_LIMIT_HIT',
         data: { until: rateLimitUntil, remainingMinutes: 15 }
     });
-    
+
     sendStatus('rate_limit', { remainingMinutes: 15 });
-    
+
     // Set timeout to auto-resume
     setTimeout(() => {
         checkRateLimitExpiry();
@@ -321,7 +321,7 @@ function checkRateLimitExpiry() {
         rateLimitUntil = null;
         isPaused = false;
         chrome.storage.local.set({ rateLimitUntil: null });
-        
+
         if (isRunning) {
             sendStatus('resumed', { message: 'Rate limit cleared, resuming operation' });
         }
@@ -332,15 +332,15 @@ function checkRateLimitExpiry() {
 async function refollowUser(username) {
     try {
         console.log(`Refollowing ${username}...`);
-        
+
         // Navigate to user profile
         const profileUrl = `https://twitter.com/${username}`;
         // Note: In content script, we can't navigate directly
         // We'll need to send message to background or user needs to be on profile page
-        
+
         // For now, just log it - full implementation would require more complex navigation
         console.log(`To refollow, visit: ${profileUrl}`);
-        
+
         return true;
     } catch (error) {
         console.error('Refollow error:', error);
@@ -363,13 +363,13 @@ function scanUsers() {
             // Check if user should be skipped (whitelist/keywords)
             const skipCheck = shouldSkipUser(cell, username);
             if (skipCheck.skip) {
-                chrome.runtime.sendMessage({ 
-                    type: 'USER_PROCESSED', 
+                chrome.runtime.sendMessage({
+                    type: 'USER_PROCESSED',
                     data: { username, action: `skipped:${skipCheck.reason}`, timestamp: Date.now() }
                 });
                 return;
             }
-            
+
             unfollowQueue.push(cell);
             newUsersFound++;
         }
@@ -542,20 +542,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         } else {
             sendResponse({ success: false, message: 'No users to undo' });
         }
-    }
-    return true;
-});
-        sendResponse({ success: true });
-    } else if (message.action === 'CONTINUE_TEST') {
-        testComplete = true;
-        isPaused = false;
-        isRunning = true;
-        chrome.storage.local.set({ testComplete: true });
-        mainLoop();
-        sendResponse({ success: true });
-    } else if (message.action === 'GET_STATUS') {
-        sendStatus('idle');
-        sendResponse({ success: true });
     }
     return true;
 });
