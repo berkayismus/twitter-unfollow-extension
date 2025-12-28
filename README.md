@@ -20,8 +20,11 @@ Seni takip etmeyen kullanıcıları otomatik tespit edip takipten çıkaran Chro
 - 📊 **30 Günlük Chart**: Chartist.js ile görsel istatistikler
 - 📥 **CSV Export**: İşlem geçmişini CSV olarak indir
 - 🌙 **Dark Mode**: Karanlık tema desteği
+- 🌐 **Çoklu Dil Desteği**: Türkçe ve İngilizce arayüz (TR/EN)
 - 📈 **Progress Bar**: Gerçek zamanlı ilerleme ve ETA
 - 📋 **User List**: İşlenen kullanıcıların canlı listesi
+  - ↶ Tek tıkla geri al butonu
+  - ⭐ Tek tıkla whitelist'e ekle butonu
 - 🧪 **Dry-Run Mode**: Gerçekte takipten çıkmadan test et
 - ↶ **Undo System**: Son işlemleri geri al (persistent)
 - ⏱️ **Smart Rate Limit**: 15 dakika sonra otomatik devam
@@ -87,10 +90,14 @@ Extension Chrome Web Store'da yayınlandıktan sonra direkt oradan kurulabilecek
 twitter-unfollow-extension/
 ├── manifest.json          # Extension configuration (Manifest V3)
 ├── background.js          # Service worker for message relay
-├── content.js             # Main automation logic (564 lines)
+├── content.js             # Main automation logic
 ├── popup.html             # 3-tab UI (Ana/Filtreler/İstatistikler)
-├── popup.js               # UI controller and handlers (693 lines)
-├── styles.css             # CSS with dark mode support (464 lines)
+├── popup.js               # UI controller and handlers
+├── styles.css             # CSS with dark mode support
+├── i18n.js                # Internationalization module
+├── locales/               # Language files
+│   ├── tr.json           # Turkish translations
+│   └── en.json           # English translations
 ├── lib/                   # External libraries
 │   ├── chartist.min.js   # Chart library
 │   └── chartist.min.css  # Chart styles
