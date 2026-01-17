@@ -18,7 +18,8 @@
         "processing": "İşleniyor",
         "paused": "Duraklatıldı",
         "stopped": "Durduruldu",
-        "reset": "Sıfırlandı"
+        "reset": "Sıfırlandı",
+        "completed": "Tamamlandı"
     },
     "alerts": {
         "batchComplete": "Batch Tamamlandı",
@@ -90,5 +91,34 @@
     "language": {
         "toggle": "Change Language",
         "current": "TR"
+    },
+    "aria": {
+        "startButton": "Otomatik takipten çıkarmayı başlat",
+        "stopButton": "Otomatik takipten çıkarmayı durdur",
+        "continueButton": "50 kişi daha takipten çık",
+        "resetButton": "Tüm istatistikleri sıfırla",
+        "undoButton": "{count} işlem geri alınabilir",
+        "themeToggle": "Tema değiştir (açık/koyu)",
+        "languageToggle": "Dil değiştir",
+        "exportButton": "Takipten çıkma geçmişini CSV olarak indir",
+        "exportCsvButton": "İstatistikleri CSV olarak indir",
+        "keywordInput": "Atlanacak anahtar kelime girin",
+        "whitelistInput": "Korunacak kullanıcı adı girin",
+        "addKeywordButton": "Anahtar kelimeyi atlama listesine ekle",
+        "addWhitelistButton": "Kullanıcıyı koruma listesine ekle",
+        "removeKeyword": "{keyword} anahtar kelimesini kaldır",
+        "removeWhitelist": "@{username} kullanıcısını koruma listesinden kaldır",
+        "undoUser": "@{username} için takipten çıkmayı geri al",
+        "whitelistUser": "@{username} kullanıcısını koruma listesine ekle",
+        "tabMain": "Ana sekme",
+        "tabFilters": "Filtreler sekmesi",
+        "tabStats": "İstatistikler sekmesi",
+        "statusReady": "Hazır",
+        "statusProcessing": "İşleniyor",
+        "statusStopped": "Durduruldu",
+        "userListRegion": "İşlenen kullanıcılar listesi",
+        "rateLimitCountdown": "sonra otomatik devam edilecek",
+        "found": "bulundu",
+        "chartDescription": "Son 30 günde takipten çıkılan kullanıcı sayısını gösteren grafik"
     }
 }

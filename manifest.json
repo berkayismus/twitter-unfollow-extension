@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Twitter/X Auto Unfollow",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "Seni takip etmeyen kullanıcıları otomatik tespit edip takipten çıkarır",
     "permissions": [
         "storage",
@@ -13,16 +13,16 @@
         "https://x.com/*"
     ],
     "icons": {
-        "16": "icons/icon16.png",
-        "48": "icons/icon48.png",
-        "128": "icons/icon128.png"
+        "16": "assets/icons/icon16.png",
+        "48": "assets/icons/icon48.png",
+        "128": "assets/icons/icon128.png"
     },
     "action": {
-        "default_popup": "popup.html",
+        "default_popup": "src/popup/popup.html",
         "default_icon": {
-            "16": "icons/icon16.png",
-            "48": "icons/icon48.png",
-            "128": "icons/icon128.png"
+            "16": "assets/icons/icon16.png",
+            "48": "assets/icons/icon48.png",
+            "128": "assets/icons/icon128.png"
         }
     },
     "content_scripts": [
@@ -32,13 +32,14 @@
                 "https://x.com/*/following"
             ],
             "js": [
-                "content.js"
+                "src/shared/constants.js",
+                "src/content/index.js"
             ],
             "run_at": "document_idle"
         }
     ],
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "src/background/index.js"
     },
     "web_accessible_resources": [
         {

@@ -18,7 +18,8 @@
         "processing": "Processing",
         "paused": "Paused",
         "stopped": "Stopped",
-        "reset": "Reset complete"
+        "reset": "Reset complete",
+        "completed": "Completed"
     },
     "alerts": {
         "batchComplete": "Batch Complete",
@@ -90,5 +91,34 @@
     "language": {
         "toggle": "Dil Değiştir",
         "current": "EN"
+    },
+    "aria": {
+        "startButton": "Start automatic unfollowing",
+        "stopButton": "Stop automatic unfollowing",
+        "continueButton": "Continue unfollowing 50 more users",
+        "resetButton": "Reset all statistics",
+        "undoButton": "{count} actions can be undone",
+        "themeToggle": "Toggle theme (light/dark)",
+        "languageToggle": "Change language",
+        "exportButton": "Export unfollow history as CSV file",
+        "exportCsvButton": "Export statistics as CSV file",
+        "keywordInput": "Enter keyword to skip",
+        "whitelistInput": "Enter username to protect",
+        "addKeywordButton": "Add keyword to skip list",
+        "addWhitelistButton": "Add user to protection list",
+        "removeKeyword": "Remove keyword {keyword}",
+        "removeWhitelist": "Remove @{username} from protection list",
+        "undoUser": "Undo unfollow for @{username}",
+        "whitelistUser": "Add @{username} to protection list",
+        "tabMain": "Main tab",
+        "tabFilters": "Filters tab",
+        "tabStats": "Statistics tab",
+        "statusReady": "Ready",
+        "statusProcessing": "Processing",
+        "statusStopped": "Stopped",
+        "userListRegion": "Processed users list",
+        "rateLimitCountdown": "will automatically resume after",
+        "found": "found",
+        "chartDescription": "Chart showing the number of users unfollowed in the last 30 days"
     }
 }
