@@ -63,10 +63,6 @@ const TwitterUnfollowPopup = (function () {
             statusText: document.getElementById('statusText'),
             statusIndicator: document.getElementById('statusIndicator'),
 
-            progressDetails: document.getElementById('progressDetails'),
-            progressBar: document.getElementById('progressBar'),
-            progressStats: document.getElementById('progressStats'),
-
             userList: document.getElementById('userList'),
 
             testModeAlert: document.getElementById('testModeAlert'),
@@ -336,7 +332,6 @@ const TwitterUnfollowPopup = (function () {
             isRunning = true;
             elements.startBtn.style.display = 'none';
             elements.stopBtn.style.display = 'block';
-            elements.progressDetails.style.display = 'block';
             elements.userList.innerHTML = '';
             displayedUsers.clear(); // Clear the tracking Set
             updateStatus('active', `🔄 ${I18n.t('status.processing')}...`);
@@ -364,7 +359,6 @@ const TwitterUnfollowPopup = (function () {
             isRunning = false;
             elements.startBtn.style.display = 'block';
             elements.stopBtn.style.display = 'none';
-            elements.progressDetails.style.display = 'none';
             updateStatus('stopped', `⏸ ${I18n.t('status.stopped')}`);
         } catch (error) {
             console.error('Failed to stop:', error);
@@ -992,7 +986,6 @@ const TwitterUnfollowPopup = (function () {
                 isRunning = false;
                 elements.startBtn.style.display = 'block';
                 elements.stopBtn.style.display = 'none';
-                elements.progressDetails.style.display = 'none';
                 break;
             case Constants.STATUS.LIMIT_REACHED:
                 updateStatus('stopped', `🚫 ${I18n.t('alerts.dailyLimitReached')}`);
