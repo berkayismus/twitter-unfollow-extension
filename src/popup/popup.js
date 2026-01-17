@@ -30,6 +30,9 @@ const TwitterUnfollowPopup = (function () {
     /** @type {Object<string, HTMLElement>} Cached DOM elements */
     let elements = {};
 
+    /** @type {Set<string>} Set of displayed users to prevent duplicates */
+    let displayedUsers = new Set();
+
     // ═══════════════════════════════════════════════════════════════
     // PRIVATE METHODS - DOM Utilities
     // ═══════════════════════════════════════════════════════════════
@@ -335,6 +338,7 @@ const TwitterUnfollowPopup = (function () {
             elements.stopBtn.style.display = 'block';
             elements.progressDetails.style.display = 'block';
             elements.userList.innerHTML = '';
+            displayedUsers.clear(); // Clear the tracking Set
             updateStatus('active', `🔄 ${I18n.t('status.processing')}...`);
         } catch (error) {
             console.error('Failed to start:', error);
@@ -406,6 +410,7 @@ const TwitterUnfollowPopup = (function () {
             elements.limitReachedAlert.style.display = 'none';
             elements.startBtn.disabled = false;
             elements.userList.innerHTML = '';
+            displayedUsers.clear(); // Clear the tracking Set
             updateUndoButton(0);
 
             updateStatus('ready', `✓ ${I18n.t('status.reset')}`);
@@ -760,6 +765,17 @@ const TwitterUnfollowPopup = (function () {
      * @returns {Promise<void>}
      */
     async function addUserToList(username, action, timestamp) {
+        // Create unique key for this user+action combination
+        const userKey = `${username}:${action}`;
+
+        // Check for duplicates using Set (more reliable than DOM query)
+        if (displayedUsers.has(userKey)) {
+            return; // Skip duplicate
+        }
+
+        // Add to tracking Set
+        displayedUsers.add(userKey);
+
         const li = createElement('li');
         const time = new Date(timestamp).toLocaleTimeString('tr-TR', {
             hour: '2-digit',
