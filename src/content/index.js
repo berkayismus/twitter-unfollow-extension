@@ -468,68 +468,80 @@ const TwitterUnfollowContent = (function () {
                 return;
             }
 
-            // Phase 1: Scroll and scan to build queue
-            let lastUserCellCount = 0;
-            let sameCountStreak = 0;
+            // Scan current visible users
+            scanUsers();
 
-            for (let i = 0; i < Constants.LIMITS.SCROLL_CYCLES_BEFORE_PROCESS && isRunning; i++) {
-                const beforeQueueSize = unfollowQueue.length;
-                scanUsers();
-                const afterQueueSize = unfollowQueue.length;
-
-                if (afterQueueSize === beforeQueueSize) {
-                    consecutiveEmptyScans++;
-                } else {
-                    consecutiveEmptyScans = 0;
+            // Process users immediately before scrolling (prevents DOM removal issue)
+            while (unfollowQueue.length > 0 && isRunning && !isPaused) {
+                if (sessionCount >= Constants.LIMITS.MAX_SESSION) {
+                    isRunning = false;
+                    sendStatus(Constants.STATUS.LIMIT_REACHED);
+                    break;
                 }
 
-                const currentUserCellCount = await autoScroll();
+                // Check batch milestone
+                if (testMode && !testComplete && sessionCount >= Constants.LIMITS.BATCH_SIZE) {
+                    isPaused = true;
+                    chrome.runtime.sendMessage({ type: Constants.MESSAGE_TYPES.TEST_COMPLETE });
+                    sendStatus(Constants.STATUS.TEST_COMPLETE);
+                    return;
+                }
 
-                if (currentUserCellCount === lastUserCellCount) {
-                    sameCountStreak++;
-                    if (sameCountStreak >= Constants.LIMITS.MAX_SAME_COUNT_STREAK) {
-                        console.log('No new users loading after multiple scrolls');
-                        break;
+                const userCell = unfollowQueue.shift();
+                if (userCell && document.contains(userCell)) {
+                    const success = await unfollowUser(userCell);
+                    if (!success) {
+                        console.log('Unfollow failed, might be rate limited');
                     }
-                } else {
-                    sameCountStreak = 0;
-                    lastUserCellCount = currentUserCellCount;
                 }
             }
 
-            // Phase 2: Process users from queue
-            if (unfollowQueue.length > 0) {
-                const processCount = Math.min(Constants.LIMITS.PROCESS_BATCH_SIZE, unfollowQueue.length);
+            if (!isRunning || isPaused) continue;
 
-                for (let i = 0; i < processCount && isRunning && !isPaused; i++) {
+            // Scroll to load more users
+            let lastUserCellCount = 0;
+            let sameCountStreak = 0;
+
+            const currentUserCellCount = await autoScroll();
+
+            if (currentUserCellCount === lastUserCellCount) {
+                sameCountStreak++;
+                consecutiveEmptyScans++;
+            } else {
+                sameCountStreak = 0;
+                consecutiveEmptyScans = 0;
+                lastUserCellCount = currentUserCellCount;
+            }
+
+            // Check if we should stop (no new users loading)
+            if (sameCountStreak >= Constants.LIMITS.MAX_SAME_COUNT_STREAK ||
+                consecutiveEmptyScans >= Constants.LIMITS.MAX_EMPTY_SCANS) {
+                // One final scan after last scroll
+                scanUsers();
+
+                // Process any remaining users
+                while (unfollowQueue.length > 0 && isRunning && !isPaused) {
                     if (sessionCount >= Constants.LIMITS.MAX_SESSION) break;
 
-                    const userCell = unfollowQueue.shift();
-                    if (userCell && document.contains(userCell)) {
-                        const success = await unfollowUser(userCell);
-                        if (!success) {
-                            console.log('Unfollow failed, might be rate limited');
-                        }
-                    }
-
-                    // Check batch after each unfollow
                     if (testMode && !testComplete && sessionCount >= Constants.LIMITS.BATCH_SIZE) {
                         isPaused = true;
                         chrome.runtime.sendMessage({ type: Constants.MESSAGE_TYPES.TEST_COMPLETE });
                         sendStatus(Constants.STATUS.TEST_COMPLETE);
                         return;
                     }
+
+                    const userCell = unfollowQueue.shift();
+                    if (userCell && document.contains(userCell)) {
+                        await unfollowUser(userCell);
+                    }
                 }
-            }
 
-            if (!isRunning) break;
-
-            // Check if we should stop
-            if (unfollowQueue.length === 0 && consecutiveEmptyScans >= Constants.LIMITS.MAX_EMPTY_SCANS) {
-                console.log('No more users to process - exhausted following list');
-                isRunning = false;
-                sendStatus(Constants.STATUS.COMPLETED);
-                break;
+                if (unfollowQueue.length === 0) {
+                    console.log('No more users to process - exhausted following list');
+                    isRunning = false;
+                    sendStatus(Constants.STATUS.COMPLETED);
+                    break;
+                }
             }
 
             // Random pause to appear more human
